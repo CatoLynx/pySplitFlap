@@ -1,2 +1,2 @@
 # Installation
-`pip install splitflap`
+`pip install pysplitflap`
