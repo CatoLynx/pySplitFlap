@@ -1,0 +1,2 @@
+# Installation
+`pip install splitflap`
