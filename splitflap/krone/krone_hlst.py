@@ -24,6 +24,12 @@ class KroneHLSTController:
     (heater, fan and light control) board.
     """
     
+    CTRL_READ = 0x81
+    CTRL_WRITE_SINGLE_ACK = 0x82
+    CTRL_WRITE_SINGLE_NOACK = 0x02
+    CTRL_WRITE_BLOCK_ACK = 0x84
+    CTRL_WRITE_BLOCK_NOACK = 0x04
+    
     CMD_GET_STATUS = 0x01
     CMD_LOCK = 0xC6
     CMD_UNLOCK = 0xC7
@@ -53,9 +59,9 @@ class KroneHLSTController:
         
     def send_command(self, address, command, parameters = None, num_response_bytes = 0):
         if command == self.CMD_GET_STATUS:
-            control = 0x81 # read data
+            control = self.CTRL_READ
         elif command in (self.CMD_LOCK, self.CMD_UNLOCK, self.CMD_CONTROL):
-            control = 0x02 # write data, one block, no ack
+            control = self.CTRL_WRITE_SINGLE_NOACK
         else:
             control = 0x00 # invalid
         
@@ -72,7 +78,7 @@ class KroneHLSTController:
         for byte in payload:
             checksum ^= byte
         
-        cmd_bytes = [0xff, 0xff] + payload + [checksum]
+        cmd_bytes = [0xFF, 0xFF] + payload + [checksum]
         
         if self.debug:
             print(" ".join((format(x, "02X") for x in cmd_bytes)))
@@ -87,7 +93,10 @@ class KroneHLSTController:
             return None
     
     def send_heartbeat(self, address):
-        cmd_bytes = [0xff, 0xff, 0x10, address, 0x00]
+        cmd_bytes = [0xFF, 0xFF, 0x10, address, 0x00]
         if self.debug:
             print(" ".join((format(x, "02X") for x in cmd_bytes)))
         self.port.write(bytearray(cmd_bytes))
+    
+    def control(self, address, light, heater, fan, force_heater, force_fan, low_min_temp):
+        return self.send_command(address, self.CMD_CONTROL, self.build_parameters(light, heater, fan, force_heater, force_fan, low_min_temp))
