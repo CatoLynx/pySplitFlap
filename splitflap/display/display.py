@@ -15,6 +15,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+from .ascii_graphics import AsciiGraphics
+
 class SplitFlapDisplay:
     def __init__(self, backend):
         self.backend = backend
@@ -54,3 +56,43 @@ class SplitFlapDisplay:
     def update(self):
         self.backend.set_module_data(self.get_module_data())
         self.backend.update()
+    
+    def get_size(self):
+        """
+        Calculates the size of the display based on the position and size
+        of its fields
+        """
+        width = 0
+        height = 0
+        for name, field in self.get_fields():
+            f_params = field.get_ascii_render_parameters()
+            x = f_params['x']
+            y = f_params['y']
+            f_end_x = x + f_params['width']
+            f_end_y = y + f_params['height']
+            if f_end_x > width:
+                width = f_end_x
+            if f_end_y > height:
+                height = f_end_y
+        return (width, height)
+    
+    def render_ascii(self):
+        """
+        Renders the display layout as ASCII graphics using ASCII frame symbols
+        """
+        width, height = self.get_size()
+        graphics = AsciiGraphics(width, height)
+        for name, field in self.get_fields():
+            f_params = field.get_ascii_render_parameters()
+            x = f_params['x']
+            y = f_params['y']
+            graphics.draw_rectangle(x, y, f_params['width'], f_params['height'])
+            f_value = field.get()
+            if type(f_value) in (list, tuple):
+                for i, text in enumerate(f_value):
+                    graphics.draw_text(x + f_params['x_offset'] + i * f_params['spacing'], y + f_params['y_offset'], text[:f_params['text_max_length']], f_params['text_spacing'])
+            else:
+                graphics.draw_text(x + f_params['x_offset'], y + f_params['y_offset'], field.get(), f_params['text_spacing'])
+            for i in range(field.length - 1):
+                graphics.draw_line(f_params['spacing'] * (i+1), y, f_params['height'], 'v', t_ends=True)
+        return graphics.render()

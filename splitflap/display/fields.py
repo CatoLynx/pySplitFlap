@@ -19,7 +19,9 @@ class BaseField:
     # This is needed so Form.get_fields() will know what to include
     _is_field = True
     
-    def __init__(self, start_address = None, length = 1, descending = False, address_mapping = None, display_mapping = None):
+    def __init__(self, start_address = None, length = 1, descending = False,
+                 address_mapping = None, display_mapping = None,
+                 x = 0, y = 0, module_width = 1, module_height = 1):
         """
         start_address: the address of the first module in this field
         length: How many modules make up this field
@@ -28,6 +30,12 @@ class BaseField:
                          addresses corresponding to the digits in this field
         display_mapping: Optional mapping of split-flap card numbers to
                          displayed text or symbols for all modules in this field
+        x: Horizontal offset of the field in multiples of the smallest unit size
+        y: Vertical offset of the field in multiples of the smallest unit size
+        module_width: Width of the modules making up the field in multiples
+                       of the smallest unit size
+        module_height: Height of the modules making up the field in multiples
+                       of the smallest unit size
         """
         if start_address is None and address_mapping is None:
             raise AttributeError("Either start_address or address_mapping must be present")
@@ -60,6 +68,10 @@ class BaseField:
             self.inverse_display_mapping = {v: k for k, v in display_mapping.items()}
         else:
             self.inverse_display_mapping = None
+        self.x = x
+        self.y = y
+        self.module_width = module_width
+        self.module_height = module_height
         self.value = None
     
     def set(self, value):
@@ -76,6 +88,23 @@ class BaseField:
         for i in range(self.length):
             module_data.append(self.get_single_module_data(i))
         return module_data
+    
+    def get_ascii_render_parameters(self):
+        """
+        Calculate the parameters needed to render the field as ASCII graphics
+        """
+        parameters = {
+            'x': self.x * 2,
+            'y': self.y * 2,
+            'width': self.length * 2 * self.module_width + 1,
+            'height': 2 * self.module_height + 1,
+            'spacing': 2 * self.module_width,
+            'text_spacing': 2 * self.module_width,
+            'x_offset': self.module_width,
+            'y_offset': self.module_height,
+            'text_max_length': 2 * self.module_width - 1,
+        }
+        return parameters
 
 
 class TextField(BaseField):
@@ -128,3 +157,9 @@ class CustomMapField(BaseField):
         display_value = self.value[pos]
         code = self.inverse_display_mapping.get(display_value, 0)
         return addr, code
+    
+    def get_ascii_render_parameters(self):
+        parameters = super().get_ascii_render_parameters()
+        parameters['x_offset'] = 1
+        parameters['text_spacing'] = 1
+        return parameters
