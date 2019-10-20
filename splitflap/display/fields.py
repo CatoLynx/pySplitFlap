@@ -72,7 +72,7 @@ class BaseField:
         self.y = y
         self.module_width = module_width
         self.module_height = module_height
-        self.value = None
+        self.value = ""
     
     def set(self, value):
         self.value = value
@@ -139,12 +139,18 @@ class TextField(BaseField):
 class CustomMapField(BaseField):
     def __init__(self, display_mapping, *args, value = [], **kwargs):
         super().__init__(*args, display_mapping=display_mapping, **kwargs)
+        self.value = [""] * self.length
         self.set(value)
 
     def set(self, value):
         if type(value) not in (list, tuple):
             value = [value] * self.length
-        self.value = value[:self.length] + [None] * (self.length - len(value))
+        value = value[:self.length] + [""] * (self.length - len(value))
+        for i, module_value in enumerate(value):
+            if module_value not in self.inverse_display_mapping:
+                self.value[i] = ""
+            else:
+                self.value[i] = module_value
     
     def get_single_module_data(self, pos):
         """
