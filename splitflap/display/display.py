@@ -30,6 +30,13 @@ class SplitFlapDisplay:
                 fields.append((name, candidate))
         return fields
     
+    def clear(self):
+        """
+        Clear all fields
+        """
+        for name, field in self.get_fields():
+            field.clear()
+    
     def check_address_collisions(self):
         """
         Checks if any of the addresses used by the fields are occupied

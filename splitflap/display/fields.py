@@ -72,13 +72,16 @@ class BaseField:
         self.y = y
         self.module_width = module_width
         self.module_height = module_height
-        self.value = ""
+        self.value = " " * self.length
     
     def set(self, value):
         self.value = value
     
     def get(self):
         return self.value
+    
+    def clear(self):
+        self.value = " " * self.length
     
     def get_single_module_data(self, pos):
         raise NotImplementedError
@@ -151,6 +154,9 @@ class CustomMapField(BaseField):
                 self.value[i] = ""
             else:
                 self.value[i] = module_value
+    
+    def clear(self):
+        self.value = [""] * self.length
     
     def get_single_module_data(self, pos):
         """
