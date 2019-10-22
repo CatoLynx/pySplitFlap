@@ -20,12 +20,14 @@ class BaseField:
     _is_field = True
     
     def __init__(self, start_address = None, length = 1, descending = False,
+                 text_align = 'left',
                  address_mapping = None, display_mapping = None,
                  x = 0, y = 0, module_width = 1, module_height = 1):
         """
         start_address: the address of the first module in this field
         length: How many modules make up this field
         descending: If using start_address, select descending addresses
+        text_align: Alignment of the text (left, center, right)
         address_mapping: If modules have non-sequential addresses, the list of
                          addresses corresponding to the digits in this field
         display_mapping: Optional mapping of split-flap card numbers to
@@ -56,6 +58,9 @@ class BaseField:
         self.start_address = start_address
         self.length = length
         self.descending = descending
+        if text_align not in ('left', 'center', 'right'):
+            raise ValueError("text_align must be left, center or right")
+        self.text_align = text_align
         if address_mapping is not None:
             self.address_mapping = address_mapping
         else:
@@ -121,7 +126,13 @@ class TextField(BaseField):
             raise ValueError("value must be str")
         if self.upper_only:
             value = value.upper()
-        self.value = value[:self.length].ljust(self.length)
+        self.value = value[:self.length]
+        if self.text_align == 'left':
+            self.value = self.value.ljust(self.length)
+        elif self.text_align == 'center':
+            self.value = self.value.center(self.length)
+        elif self.text_align == 'right':
+            self.value = self.value.rjust(self.length)
     
     def get_single_module_data(self, pos):
         """

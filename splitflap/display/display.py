@@ -97,9 +97,16 @@ class SplitFlapDisplay:
             f_value = field.get()
             if type(f_value) in (list, tuple):
                 for i, text in enumerate(f_value):
-                    graphics.draw_text(x + f_params['x_offset'] + i * f_params['spacing'], y + f_params['y_offset'], text[:f_params['text_max_length']], f_params['text_spacing'])
+                    rendered_text = text[:f_params['text_max_length']]
+                    if field.text_align == 'left':
+                        rendered_text = text.ljust(f_params['text_max_length'])
+                    elif field.text_align == 'center':
+                        rendered_text = text.center(f_params['text_max_length'])
+                    elif field.text_align == 'right':
+                        rendered_text = text.rjust(f_params['text_max_length'])
+                    graphics.draw_text(x + f_params['x_offset'] + i * f_params['spacing'], y + f_params['y_offset'], rendered_text, f_params['text_spacing'])
             else:
                 graphics.draw_text(x + f_params['x_offset'], y + f_params['y_offset'], field.get(), f_params['text_spacing'])
             for i in range(field.length - 1):
-                graphics.draw_line(f_params['spacing'] * (i+1), y, f_params['height'], 'v', t_ends=True)
+                graphics.draw_line(x + f_params['spacing'] * (i+1), y, f_params['height'], 'v', t_ends=True)
         return graphics.render()
