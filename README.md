@@ -11,18 +11,67 @@ Support is planned for:
 
 * KRONE / MAN "FBK" split-flap group controller boards
 * OMEGA split-flap units with RS-485 data protocol
+* ADtranz split-flap units with infrared absolute encoders
 
-# Relevant info
+# Hardware description
 Probably most relevant is the pinout of the various devices.
-Here's a short, incomplete summary:
+Here's a short, incomplete summary.
 
-![Pinout of 10-pin FBM pin header](/images/pinout_fbm.png?raw=true)
+## KRONE / MAN system with ZiLOG microcontrollers
+This system has a ZiLOG microcontroller on every split-flap unit and separate address boards, where the units are usually plugged in. This enables easy swapping of units without having to change the address, since the address boards would be permanently mounted in the display's backplane.
 
-Pinout of the 10-pin header on KRONE / MAN "FBM" modules. You will need the "FBUE" address board to go with it.
+The address is set with DIP switches and transferred to the split-flap unit using a shift register.
 
-![Pinout of 20-pin FBUE pin header](/images/pinout_fbue.png?raw=true)
+The split-flap units have a 10-pin connector exposing the FBM single interface:
 
-Pinout of the 20-pin KRONE / MAN split-flap bus header. This is what you will most likely encounter when dealing with this type of display.
+![FBM pin numbering](/images/krone_fbm_pin_numbering.jpg?raw=true)
+
+| Pin | Function                                        |
+|-----|-------------------------------------------------|
+| 1   | GND                                             |
+| 2   | 42V AC (Live)                                   |
+| 3   | VCC (9...12V DC)                                |
+| 4   | 42V AC (Neutral)                                |
+| 5   | 5V DC output for address logic                  |
+| 6   | Address shift register data                     |
+| 7   | Address shift register clock                    |
+| 8   | Tx / Data from unit (CMOS logic levels)         |
+| 9   | Rx / Data to unit (CMOS logic levels)           |
+| 10  | Address shift register strobe                   |
+
+However, this alone is rather impractical. Controlling these units in combination with the address boards is much easier. The address boards have a 20-pin connector which exposes the FBM bus interface:
+
+| Pin      | Function                                 |
+|----------|------------------------------------------|
+| 1...6    | 42V AC (Live)                            |
+| 7...12   | 42V AC (Neutral)                         |
+| 13,14,15  | VCC (9...12V DC)                        |
+| 16,18,20 | GND                                      |
+| 17       | Rx / Data to units (CMOS logic levels)   |
+| 19       | Tx / Data from units (CMOS logic levels) |
+
+If you don't have the address boards, you can order the remade version I created together with [Phalos Southpaw](http://www.phalos-werkstatt.de/), which is available [here](https://github.com/Mezgrman/Krone-FBUE)!
+
+# Reference photos
+In case you're not sure what kind of display you have, here are some pictures:
+
+![KRONE / MAN split-flap unit](/images/krone_zilog.jpg?raw=true)
+
+KRONE / MAN split-flap unit with ZiLOG microcontroller. There is also a variant with a THT microcontroller, which is also compatible.
+
+![FBUE address board](/images/krone_fbue.jpg?raw=true)
+
+KRONE / MAN "FBUE" address board for "FBM" split-flap units
+
+![KRONE / MAN FBK board](/images/krone_fbk.jpg?raw=true)
+
+KRONE / MAN "FBK" board for controlling groups of FBM+FBUE split-flap units
+
+![OMEGA split-flap unit](/images/omega_unit.jpg?raw=true)
+
+OMEGA split-flap unit with RS-485 and DC input, commonly found in SBB (Swiss train operator) displays
+
+
 
 # Installation
 `pip install pysplitflap`
