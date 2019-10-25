@@ -1,6 +1,6 @@
 name = "pySplitFlap"
 version = "1.1.2"
-description = "A library for controlling KRONE / MAN split-flap displays"
+description = "A library for controlling split-flap displays"
 license = "GPLv3"
 author = "Julian Metzler"
 author_email = "git@mezgr.de"
