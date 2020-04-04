@@ -154,13 +154,13 @@ class MirrorField(BaseField):
         source_field.add_mirror(self)
 
     def set(self, value):
-        raise NotImplementedError("Mirror fields are read-only")
+        pass
 
     def get(self):
         return self.source_field.get()
 
     def clear(self):
-        raise NotImplementedError("Mirror fields are read-only")
+        pass
 
     def get_single_module_data(self, pos):
         addr, code = self.source_field.get_single_module_data(pos)
