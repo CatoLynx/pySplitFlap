@@ -22,7 +22,7 @@ class BaseField:
     def __init__(self, start_address = None, length = 1, descending = False,
                  text_align = 'left',
                  address_mapping = None, display_mapping = None,
-                 x = 0, y = 0, module_width = 1, module_height = 1):
+                 x = 0, y = 0, module_width = 1, module_height = 1, home_pos = 0):
         """
         start_address: the address of the first module in this field
         length: How many modules make up this field
@@ -38,6 +38,7 @@ class BaseField:
                        of the smallest unit size
         module_height: Height of the modules making up the field in multiples
                        of the smallest unit size
+        home_pos: ID of the home position. Should be 0, but is different in some cases
         """
         if start_address is None and address_mapping is None:
             raise AttributeError("Either start_address or address_mapping must be present")
@@ -77,6 +78,7 @@ class BaseField:
         self.y = y
         self.module_width = module_width
         self.module_height = module_height
+        self.home_pos = home_pos
         self.value = " " * self.length
     
     def set(self, value):
@@ -144,7 +146,7 @@ class TextField(BaseField):
         addr = self.address_mapping[pos]
         char = self.value[pos]
         if self.display_mapping is not None:
-            code = self.inverse_display_mapping.get(char, 0)
+            code = self.inverse_display_mapping.get(char, self.home_pos)
         else:
             code = ord(char.encode('iso-8859-1'))
         return addr, code
@@ -178,7 +180,7 @@ class CustomMapField(BaseField):
             raise ValueError("pos must be inside field boundaries")
         addr = self.address_mapping[pos]
         display_value = self.value[pos]
-        code = self.inverse_display_mapping.get(display_value, 0)
+        code = self.inverse_display_mapping.get(display_value, self.home_pos)
         return addr, code
     
     def get_ascii_render_parameters(self):

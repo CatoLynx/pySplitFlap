@@ -17,3 +17,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from .fbm import KroneFBMController
 from .hlst import KroneHLSTController
+from .k8200 import Krone8200Controller

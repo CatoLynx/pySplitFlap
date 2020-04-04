@@ -6,6 +6,7 @@ This library currently supports the following devices:
 
 * KRONE / MAN "FBM" split-flap modules with ZiLOG microcontroller (in combination with the "FBUE" address board)
 * KRONE / MAN "HLST" heater and light control boards
+* KRONE 8200 display system (doesn't require any modifications, can send commands to the integrated display controller)
 
 Support is planned for:
 

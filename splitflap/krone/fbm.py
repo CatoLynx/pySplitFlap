@@ -1,5 +1,5 @@
 """
-Copyright 2019 Julian Metzler
+Copyright 2020 Julian Metzler
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -121,9 +121,11 @@ class KroneFBMController:
             address = start_address - i if descending else start_address + i
             self.set_code(address, ord(char.encode('iso-8859-1')))
     
-    def set_module_data(self, module_data):
+    def d_set_module_data(self, module_data):
+        # Compatibility function for SplitFlapDisplay class
         for addr, code in module_data:
             self.set_code(addr, code)
     
-    def update(self):
+    def d_update(self):
+        # Compatibility function for SplitFlapDisplay class
         self.set_all()

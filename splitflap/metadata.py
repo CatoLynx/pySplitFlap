@@ -1,5 +1,5 @@
 name = "pySplitFlap"
-version = "1.1.2"
+version = "1.2"
 description = "A library for controlling split-flap displays"
 license = "GPLv3"
 author = "Julian Metzler"

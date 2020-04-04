@@ -16,3 +16,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from .metadata import version as __version__
+from .exceptions import *

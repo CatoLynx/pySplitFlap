@@ -61,8 +61,8 @@ class SplitFlapDisplay:
         return module_data
     
     def update(self):
-        self.backend.set_module_data(self.get_module_data())
-        self.backend.update()
+        self.backend.d_set_module_data(self.get_module_data())
+        self.backend.d_update()
     
     def get_size(self):
         """
@@ -99,11 +99,11 @@ class SplitFlapDisplay:
                 for i, text in enumerate(f_value):
                     rendered_text = text[:f_params['text_max_length']]
                     if field.text_align == 'left':
-                        rendered_text = text.ljust(f_params['text_max_length'])
+                        rendered_text = rendered_text.ljust(f_params['text_max_length'])
                     elif field.text_align == 'center':
-                        rendered_text = text.center(f_params['text_max_length'])
+                        rendered_text = rendered_text.center(f_params['text_max_length'])
                     elif field.text_align == 'right':
-                        rendered_text = text.rjust(f_params['text_max_length'])
+                        rendered_text = rendered_text.rjust(f_params['text_max_length'])
                     graphics.draw_text(x + f_params['x_offset'] + i * f_params['spacing'], y + f_params['y_offset'], rendered_text, f_params['text_spacing'])
             else:
                 graphics.draw_text(x + f_params['x_offset'], y + f_params['y_offset'], field.get(), f_params['text_spacing'])
