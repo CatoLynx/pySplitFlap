@@ -16,5 +16,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 from .display import SplitFlapDisplay
-from .fields import TextField, CustomMapField
+from .fields import TextField, CustomMapField, MirrorField
 from .ascii_graphics import AsciiGraphics

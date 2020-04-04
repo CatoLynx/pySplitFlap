@@ -80,6 +80,7 @@ class BaseField:
         self.module_height = module_height
         self.home_pos = home_pos
         self.value = " " * self.length
+        self.mirrors = []
     
     def set(self, value):
         self.value = value
@@ -116,6 +117,73 @@ class BaseField:
         }
         return parameters
 
+    def add_mirror(self, field):
+        """
+        Add a field to the list of mirror fields
+        """
+        if field not in self.mirrors:
+            self.mirrors.append(field)
+
+    def remove_mirror(self, field):
+        """
+        Remove a field from the list of mirror fields
+        """
+        while field in self.mirrors:
+            self.mirrors.remove(field)
+
+    def update_mirrors(self):
+        """
+        Update all mirror fields of this field
+        """
+        for field in self.mirrors:
+            if type(self.value) is list:
+                field.value = self.value.copy()
+            else:
+                field.value = self.value
+
+
+class MirrorField(BaseField):
+    """
+    This special field is set up so it mirrors an existing field.
+    """
+    def __init__(self, source_field, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not isinstance(source_field, BaseField):
+            raise ValueError("source_field must be an instance of a Field subclass")
+        self.source_field = source_field
+        source_field.add_mirror(self)
+
+    def set(self, value):
+        raise NotImplementedError("Mirror fields are read-only")
+
+    def get(self):
+        return self.source_field.get()
+
+    def clear(self):
+        raise NotImplementedError("Mirror fields are read-only")
+
+    def get_single_module_data(self, pos):
+        addr, code = self.source_field.get_single_module_data(pos)
+        return self.address_mapping[pos], code
+
+    def get_module_data(self):
+        module_data = []
+        for i in range(self.length):
+            module_data.append(self.get_single_module_data(i))
+        return module_data
+
+    def get_ascii_render_parameters(self):
+        """
+        Get the base parameters from the source field,
+        but change the x and y values to allow for different placement
+        """
+        parameters = self.source_field.get_ascii_render_parameters()
+        parameters.update({
+            'x': self.x * 2,
+            'y': self.y * 2,
+        })
+        return parameters
+
 
 class TextField(BaseField):
     def __init__(self, *args, value = "", upper_only = True, **kwargs):
@@ -135,6 +203,7 @@ class TextField(BaseField):
             self.value = self.value.center(self.length)
         elif self.text_align == 'right':
             self.value = self.value.rjust(self.length)
+        self.update_mirrors()
     
     def get_single_module_data(self, pos):
         """
@@ -167,9 +236,11 @@ class CustomMapField(BaseField):
                 self.value[i] = ""
             else:
                 self.value[i] = module_value
+        self.update_mirrors()
     
     def clear(self):
         self.value = [""] * self.length
+        self.update_mirrors()
     
     def get_single_module_data(self, pos):
         """
