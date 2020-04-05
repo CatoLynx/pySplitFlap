@@ -14,6 +14,13 @@ Support is planned for:
 * KRONE / MAN "FBK" split-flap group controller boards
 * ADtranz split-flap units with infrared absolute encoders
 
+# The `SplitFlapDisplay` class
+The `SplitFlapDisplay` class is an abstraction level you can use to represent a display made up of multiple split-flap modules. It functions as a wrapper for the various display controller classes. Using this class, you can create various fields such as a `TextField`, which represents of one or more alphanumerical split-flap modules, or a `CustomMapField`, which represents split-flap modules with texts or symbols printed on the flaps. Of course, the mapping of position code to displayed value can be set according to the modules you have.
+
+It can even render the display layout as ASCII graphics in your terminal! For more details, take a look at [the example script](/example.py).
+
+![ASCII rendering of display output](/images/ascii_render.png?raw=true)
+
 # Hardware description
 Probably most relevant is the pinout of the various devices.
 Here's a short, incomplete summary.
