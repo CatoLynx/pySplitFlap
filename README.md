@@ -20,6 +20,7 @@ The `SplitFlapDisplay` class is an abstraction level you can use to represent a 
 It can even render the display layout as ASCII graphics in your terminal! For more details, take a look at [the example script](/example.py).
 
 ![ASCII rendering of display output](/images/ascii_render.png?raw=true)
+![Another ASCII rendering of display output](/images/ascii_render2.png?raw=true)
 
 # Hardware description
 Probably most relevant is the pinout of the various devices.
